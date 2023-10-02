@@ -1,6 +1,14 @@
-import re
+# AUTHOR: Samantha Shane C. Dollesin
+# STUDENT NO.: 2020-01893
+# SECTION: WX-1L
+# PROGRAM DESCRIPTION: This program takes a 
 
-input = open("input.txt")
+import re
+import tkinter as tk
+from tkinter.filedialog import askopenfilename
+
+file = askopenfilename()
+input = open(file, "r")
 
 #Since the file contains only one message, readLine() is used without iteration
 if (input.readable()):
@@ -21,8 +29,9 @@ for w in raw_words:
     if(w.isascii()):                         # disregard words with accented characters
         words.append(w)
 
+# sort the list in alphabetical order and count the frequency of the words
 words.sort()
-frequency_tb = {}
+frequency_tb = {}   #dictionary
 
 for word in words:
     if (word in frequency_tb.keys()):
@@ -32,8 +41,8 @@ for word in words:
 
 #print(frequency_tb)
 
+# display and export the data from the frequency table
 output = open("output.txt","w")
-
 size = str(len(frequency_tb.keys()))
 total = str(len(frequency_tb.keys()))
 
@@ -46,3 +55,5 @@ output.write("Total Number of Words: " + total + "\n")
 for key, value in frequency_tb.items():
     output.write(key + " " + str(value) + "\n")
     print(key, " ", value)
+
+output.close()
