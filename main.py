@@ -9,6 +9,8 @@ import os
 import re
 import tkinter as tk
 from tkinter.filedialog import askdirectory
+import decimal
+from decimal import Decimal
 
 folders = ["Spam", "Ham", "Classify"]
 spam_dictionary = {}
@@ -60,8 +62,8 @@ for f in folders:
         # sort the list in alphabetical order and count the frequency of the words
         words.sort()
         frequency_tb = {}   # dictionary for files in the classify folder
-        spam_probability_tb = {}
-        ham_probability_tb = {}
+        spam_probability_tb = {}    # P(word|Spam)
+        ham_probability_tb = {}     # P(word|Ham)
 
         for word in words:
             if (f == folders[0]):
@@ -74,27 +76,37 @@ for f in folders:
                 if (word in frequency_tb.keys()): frequency_tb[word] =  frequency_tb[word] + 1
                 else: 
                     frequency_tb[word] = 1
-                    if word in spam_dictionary.keys(): spam_probability_tb[word] = spam_dictionary[word]/spam_total   # frequency of word IN spam / total words in spam
-                    else : spam_probability_tb[word] = 1/spam_total
-                    if word in ham_dictionary.keys(): ham_probability_tb[word] = ham_dictionary[word]/ham_total  # frequency of word IN ham / total words in ham
-                    else: ham_probability_tb[word] = 1/ham_total
+
+                    if (word in spam_dictionary.keys()): 
+                        spam_probability_tb[word] = spam_dictionary[word]/spam_total  #print("/ " , word)  # frequency of word IN spam / total words in spam  
+                    else: 
+                        spam_probability_tb[word] = 0; #print("X " , word)
+                    if (word in ham_dictionary.keys()): 
+                        ham_probability_tb[word] = ham_dictionary[word]/ham_total  # frequency of word IN ham / total words in ham
+                    else: 
+                        ham_probability_tb[word] = 0;
        
         if (f == folders[2]):
+            #print(spam_probability_tb)
             P_messageSpam = 1
-            for p in spam_probability_tb: P_messageSpam = P_messageSpam*spam_probability_tb[p]
+            for p in spam_probability_tb.values(): P_messageSpam = P_messageSpam*Decimal(p)
+            #print("P_messageSpam: ", P_messageSpam)
 
+            print(ham_probability_tb)
             P_messageHam = 1
-            for p in ham_probability_tb: P_messageHam = P_messageHam*ham_probability_tb[p]
+            for p in ham_probability_tb.values(): P_messageHam = P_messageHam*Decimal(p)
+            #print("P_messageHam: ", P_messageHam)
 
-            P_message = (P_messageSpam*P_spam) + (P_messageHam*P_ham)
-            try:  P_spamMessage = (P_messageSpam * P_spam) / P_message
-            except ZeroDivisionError: P_spamMessage = 0
+            P_message = (P_messageSpam* Decimal(P_spam)) + (P_messageHam*Decimal(P_ham))
+            #print("P_message: ", P_message)
+            try:  P_spamMessage = (P_messageSpam * Decimal(P_spam)) / P_message
+            except (ZeroDivisionError, decimal.DecimalException): P_spamMessage = 0
            
             classification = ''
             if P_spamMessage < 0.5: classification = folders[1]
             else: classification = folders[0]
 
-            output.write(file_num+ " " + classification + "\t" + str(round(P_spamMessage, 5)) + "\n")
+            output.write(file_num+ " " + classification + "\t" + str(P_spamMessage) + "\n")
 
     spam_dictsize = len(spam_dictionary.keys())
     spam_total = sum(spam_dictionary.values())
@@ -103,6 +115,15 @@ for f in folders:
  
     P_spam = count_spam/(count_spam+count_ham)
     P_ham = 1 - P_spam
+
+
+
+
+
+
+
+
+
 
 # sort the words alphabetically
 spam_dictionary = dict(sorted(spam_dictionary.items()))

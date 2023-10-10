@@ -4,9 +4,10 @@ STUDENT NO.: 2020-01893 \
 SECTION: WX-1L
 
 ## PROGRAM DESCRIPTION: 
-This program takes a message from an input file and determines the frequency of each unique word in it.
+This program uses Naive Bayes classification to determine if files from the 'classify' folder contains a spam or ham message based on existing data ('spam' and 'ham' folder)
 
 ## Program Requirements
 * Python
 * Tkinter
 * Regex Module
+* Decimal Module
