@@ -1,0 +1,9 @@
+Dictionary Size: 7
+Total Number of Words: 9
+3 1
+ai 1
+byte 1
+cookies 3
+generated 1
+sized 1
+theyre 1
