@@ -1,14 +1,14 @@
-# EXERCISE #4 BAG OF WORDS
+# EXERCISE #5 SPAM FILTERING
 # AUTHOR: Samantha Shane C. Dollesin
 # STUDENT NO.: 2020-01893
 # SECTION: WX-1L
-# PROGRAM DESCRIPTION: This program takes a message from an input file and determines the frequency of each unique word in it.
+# PROGRAM DESCRIPTION: This program uses Naive Bayes classification to determine if files from the 'classify' folder
+#                      contains a spam or ham message based on existing data ('spam' and 'ham' folder)
 
 import os
 import re
 import tkinter as tk
 from tkinter.filedialog import askdirectory
-import numpy
 
 folders = ["Spam", "Ham", "Classify"]
 spam_dictionary = {}
