@@ -10,12 +10,17 @@ import tkinter as tk
 from tkinter.filedialog import askdirectory
 
 folders = ["Spam", "Ham", "Classify"]
+spam_dictionary = {}
+ham_dictionary = {}
+spam_dictsize = 0
+spam_total = 0
+ham_dictsize = 0
+ham_total = 0
 
 for f in folders:
     folder = askdirectory(title= "Select "+ f + " Folder")
     print(folder)
     files_list = os.listdir(folder)
-    print(files_list)
 
     for file in files_list:
         file = folder+"/"+ file
@@ -42,30 +47,39 @@ for f in folders:
 
         # sort the list in alphabetical order and count the frequency of the words
         words.sort()
-        frequency_tb = {}   #dictionary
+        if (f == folders[2]): frequency_tb = {}   # dictionary for files in the classify folder
 
         for word in words:
-            if (word in frequency_tb.keys()):
-                frequency_tb[word] =  frequency_tb[word] + 1
-            else:
-                frequency_tb[word] = 1
+            if (f == folders[0]):
+                if (word in spam_dictionary.keys()): spam_dictionary[word] =  spam_dictionary[word] + 1
+                else: spam_dictionary[word] = 1
+            elif (f == folders[1]):
+                if (word in ham_dictionary.keys()): ham_dictionary[word] =  ham_dictionary[word] + 1
+                else: ham_dictionary[word] = 1
+            elif (f == folders[2]):
+                if (word in frequency_tb.keys()): frequency_tb[word] =  frequency_tb[word] + 1
+                else: frequency_tb[word] = 1
 
         #print(frequency_tb)
 
-        # display and export the data from the frequency table
-        #output = open("output.txt","w")
-        size = str(len(frequency_tb.keys()))
-        total = str(sum(frequency_tb.values()))
+# display and export the data from the frequency table
+#output = open("output.txt","w")
 
-        #print()
-        #print("Dictionary Size: ", size)
-        #output.write("Dictionary Size: " + size + "\n")
-        #print("Total Number of Words: ", total + "\n")
-        #output.write("Total Number of Words: " + total + "\n")
+spam_dictsize = len(spam_dictionary.keys())
+spam_total = sum(spam_dictionary.values())
+ham_dictsize = len(ham_dictionary.keys())
+ham_total = sum(ham_dictionary.values())
+                    
+print("HAM")
+print("Dictionary Size: ", ham_dictsize)
+print("Total Number of Words: ", str(ham_total) + "\n")
+print("SPAM")
+print("Dictionary Size: ", spam_dictsize)
+print("Total Number of Words: ", str(spam_total) + "\n")
 
-        #for key, value in frequency_tb.items():
-            #output.write(key + " " + str(value) + "\n")
-            #rint(key, " ", value)
+#for key, value in frequency_tb.items():
+    #output.write(key + " " + str(value) + "\n")
+    #rint(key, " ", value)
 
-        #print()
-        #output.close()
+#print()
+#output.close()
