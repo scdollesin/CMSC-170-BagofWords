@@ -24,6 +24,7 @@ count_ham = 0
 P_spam = 0
 P_ham = 0
 
+output = open("classify.out","w")
 
 for f in folders:
     folder = askdirectory(title= "Select "+ f + " Folder")
@@ -86,16 +87,14 @@ for f in folders:
             for p in ham_probability_tb: P_messageHam = P_messageHam*ham_probability_tb[p]
 
             P_message = (P_messageSpam*P_spam) + (P_messageHam*P_ham)
-            P_spamMessage = (P_messageSpam * P_spam) / P_message
+            try:  P_spamMessage = (P_messageSpam * P_spam) / P_message
+            except ZeroDivisionError: P_spamMessage = 0
+           
             classification = ''
             if P_spamMessage < 0.5: classification = folders[1]
             else: classification = folders[0]
 
-            print(file_num, " ", classification, "\t", P_spamMessage)
-
-
-# display and export the data from the frequency table
-#output = open("output.txt","w")
+            output.write(file_num+ " " + classification + "\t" + str(round(P_spamMessage, 5)) + "\n")
 
     spam_dictsize = len(spam_dictionary.keys())
     spam_total = sum(spam_dictionary.values())
@@ -104,17 +103,34 @@ for f in folders:
  
     P_spam = count_spam/(count_spam+count_ham)
     P_ham = 1 - P_spam
-                    
+
+# sort the words alphabetically
+spam_dictionary = dict(sorted(spam_dictionary.items()))
+ham_dictionary = dict(sorted(ham_dictionary.items()))
+
+# display and write the results
 print("HAM")
 print("Dictionary Size: ", ham_dictsize)
 print("Total Number of Words: ", str(ham_total) + "\n")
+
+ham_bag = open("ham.out", "w")
+ham_bag.write("HAM" + "\n")
+ham_bag.write("Dictionary Size: " + str(ham_dictsize) + "\n")
+ham_bag.write("Total Number of Words: " + str(ham_total) + "\n")
+for key, value in ham_dictionary.items():
+    ham_bag.write(key + " " + str(value) + "\n")
+
 print("SPAM")
-print("Dictionary Size: ", spam_dictsize)
+print("Dictionary Size: ", str(spam_dictsize))
 print("Total Number of Words: ", str(spam_total) + "\n")
 
-#for key, value in frequency_tb.items():
-    #output.write(key + " " + str(value) + "\n")
-    #rint(key, " ", value)
+spam_bag = open("spam.out", "w")
+spam_bag.write("SPAM" + "\n")
+spam_bag.write("Dictionary Size: " + str(spam_dictsize) + "\n")
+spam_bag.write("Total Number of Words: " + str(spam_total) + "\n")
+for key, value in spam_dictionary.items():
+    spam_bag.write(key + " " + str(value) + "\n")
 
-#print()
-#output.close()
+output.close()
+ham_bag.close()
+spam_bag.close()
