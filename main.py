@@ -31,7 +31,6 @@ def createBag():
 
     for file in files_list:
         file_num = file[:4]
-        print(file_num)
         file = folder+"/"+ file
         input = open(file, "r")
 
@@ -77,6 +76,8 @@ spam_dictsize = len(spam_dict.keys())
 ham_dictsize = len(ham_dict.keys())
 spam_total = sum(spam_dict.values())
 ham_total = sum(ham_dict.values())
+P_Spam = spam_count/(spam_count+ham_count)
+P_Ham = 1 - P_Spam
 
 def filterSpam():
     folder = askdirectory()
@@ -112,12 +113,22 @@ def filterSpam():
             spamprob_tb[word] = frequency_tb[word]/spam_total       #P(w|Spam)
             hamprob_tb[word] = frequency_tb[word]/ham_total         #P(w|Ham)
 
-        if (file_num == "0018"):
-            print("spam total: ", ham_total)
+        P_m_Spam = 1                        #P(message|Spam)
+        for p in spamprob_tb.values():
+            P_m_Spam = P_m_Spam * p
+
+        P_m_Ham = 1                        #P(message|Ham)
+        for p in hamprob_tb.values():
+            P_m_Ham = P_m_Ham * p
+
+        if (file_num == "1129"):
+            print("ham total: ", ham_total)
             for i in frequency_tb.items():
                 print(i)
             for i in hamprob_tb.items():
                 print(i)           
+
+            print("P(message|Ham): ",P_m_Ham)
 
 
 
