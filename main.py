@@ -10,36 +10,37 @@ import tkinter as tk
 from tkinter.filedialog import askdirectory
 from tkinter.filedialog import askopenfilename
 
-spam_dict = {}
-ham_dict = {}
+def getWords(message, words_list):
+    # Split compound words into two by replacing the '-' with a space
+    message = re.sub('(?<=\w)-(?=\w)', ' ', message)
 
-def createBag(bag):
+    # Split the message by the white spaces
+    raw_words = message.split()
+
+    for w in raw_words:
+        w = ''.join(filter(str.isalnum, w))   # remove non-alphanumeric characters
+        w = w.lower()                         # convert everything into lowercase
+        if w != '':                     
+            words_list.append(w)
+
+def createBag():
     folder = askdirectory()
     files_list = os.listdir(folder)
     words = []
+    bag = {}
 
     for file in files_list:
         file_num = file[:4]
         print(file_num)
         file = folder+"/"+ file
         input = open(file, "r")
-        
+
         if (input.readable()):
             message = input.read()
-
-            input.close()
-
-            # Split compound words into two by replacing the '-' with a space
-            message = re.sub('(?<=\w)-(?=\w)', ' ', message)
-
-            # Split the message by the white spaces
-            raw_words = message.split()
-
-            for w in raw_words:
-                w = ''.join(filter(str.isalnum, w))   # remove non-alphanumeric characters
-                w = w.lower()                         # convert everything into lowercase
-                if w != '':                     
-                    words.append(w)
+            
+        input.close()
+        
+        getWords(message, words)
 
     # sort the list in alphabetical order and count the frequency of the words
     words.sort()
@@ -50,6 +51,7 @@ def createBag(bag):
         else:
             bag[word] = 1
 
+    return bag, len(files_list)
     #print(bag)
 
 # display and export the data from the frequency table
@@ -69,5 +71,54 @@ def createBag(bag):
 
 #output.close()
 
-createBag(spam_dict)
-createBag(ham_dict)
+spam_dict, spam_count = createBag()
+ham_dict, ham_count = createBag()
+spam_dictsize = len(spam_dict.keys())
+ham_dictsize = len(ham_dict.keys())
+spam_total = sum(spam_dict.values())
+ham_total = sum(ham_dict.values())
+
+def filterSpam():
+    folder = askdirectory()
+    files_list = os.listdir(folder)
+    
+    for file in files_list:
+        words = []
+        frequency_tb = {}
+        spamprob_tb = {}
+        hamprob_tb = {}    
+        
+        file_num = file[:4]
+        file = folder+"/"+ file
+        input = open(file, "r")
+
+        if (input.readable()):
+            message = input.read()
+            
+        input.close()
+        
+        getWords(message, words)
+
+        # sort the list in alphabetical order and count the frequency of the words
+        words.sort()
+
+        for word in words:
+            if (word in frequency_tb.keys()):
+                frequency_tb[word] =  frequency_tb[word] + 1
+            else:
+                frequency_tb[word] = 1
+        
+        for word in frequency_tb.keys():
+            spamprob_tb[word] = frequency_tb[word]/spam_total       #P(w|Spam)
+            hamprob_tb[word] = frequency_tb[word]/ham_total         #P(w|Ham)
+
+        if (file_num == "0018"):
+            print("spam total: ", ham_total)
+            for i in frequency_tb.items():
+                print(i)
+            for i in hamprob_tb.items():
+                print(i)           
+
+
+
+filterSpam()
