@@ -5,56 +5,69 @@
 # PROGRAM DESCRIPTION: This program takes a message from an input file and determines the frequency of each unique word in it.
 
 import re
+import os
 import tkinter as tk
+from tkinter.filedialog import askdirectory
 from tkinter.filedialog import askopenfilename
 
-file = askopenfilename()
-input = open(file, "r")
+spam_dict = {}
+ham_dict = {}
 
-#Since the file contains only one message, readLine() is used without iteration
-if (input.readable()):
-    message = input.read()
+def createBag(bag):
+    folder = askdirectory()
+    files_list = os.listdir(folder)
+    words = []
 
-input.close()
+    for file in files_list:
+        file_num = file[:4]
+        print(file_num)
+        file = folder+"/"+ file
+        input = open(file, "r")
+        
+        if (input.readable()):
+            message = input.read()
 
-# Split compound words into two by replacing the '-' with a space
-message = re.sub('(?<=\w)-(?=\w)', ' ', message)
+            input.close()
 
-# Split the message by the white spaces
-raw_words = message.split()
-words = []
+            # Split compound words into two by replacing the '-' with a space
+            message = re.sub('(?<=\w)-(?=\w)', ' ', message)
 
-for w in raw_words:
-    w = ''.join(filter(str.isalnum, w))   # remove non-alphanumeric characters
-    w = w.lower()                         # convert everything into lowercase
-    if(w.isascii()):                      # disregard words with accented characters
-        words.append(w)
+            # Split the message by the white spaces
+            raw_words = message.split()
 
-# sort the list in alphabetical order and count the frequency of the words
-words.sort()
-frequency_tb = {}   #dictionary
+            for w in raw_words:
+                w = ''.join(filter(str.isalnum, w))   # remove non-alphanumeric characters
+                w = w.lower()                         # convert everything into lowercase
+                if w != '':                     
+                    words.append(w)
 
-for word in words:
-    if (word in frequency_tb.keys()):
-        frequency_tb[word] =  frequency_tb[word] + 1
-    else:
-        frequency_tb[word] = 1
+    # sort the list in alphabetical order and count the frequency of the words
+    words.sort()
 
-#print(frequency_tb)
+    for word in words:
+        if (word in bag.keys()):
+            bag[word] =  bag[word] + 1
+        else:
+            bag[word] = 1
+
+    #print(bag)
 
 # display and export the data from the frequency table
-output = open("output.txt","w")
-size = str(len(frequency_tb.keys()))
-total = str(sum(frequency_tb.values()))
+#output = open("output.txt","w")
+#size = str(len(bag.keys()))
+#total = str(sum(bag.values()))
 
-print()
-print("Dictionary Size: ", size)
-output.write("Dictionary Size: " + size + "\n")
-print("Total Number of Words: ", total + "\n")
-output.write("Total Number of Words: " + total + "\n")
+#print()
+#print("Dictionary Size: ", size)
+#output.write("Dictionary Size: " + size + "\n")
+#print("Total Number of Words: ", total + "\n")
+#output.write("Total Number of Words: " + total + "\n")
 
-for key, value in frequency_tb.items():
-    output.write(key + " " + str(value) + "\n")
-    print(key, " ", value)
+#for key, value in bag.items():
+#    output.write(key + " " + str(value) + "\n")
+#    print(key, " ", value)
 
-output.close()
+#output.close()
+
+createBag(spam_dict)
+createBag(ham_dict)
